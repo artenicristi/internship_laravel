@@ -30,12 +30,16 @@
                     <td>{{$vacancy->company->name}}</td>
                     <td>{{$vacancy->user->name}}</td>
                     <td>
-                        <a href="{{route('vacancy.edit', ['vacancy' => $vacancy->id])}}">Edit</a>
-                        <form method="POST" action="{{route('vacancy.delete', ['vacancy' => $vacancy->id])}}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit">Delete</button>
-                        </form>
+{{--                        @can('update', $vacancy)--}}
+                            <a href="{{route('vacancy.edit', ['vacancy' => $vacancy->id])}}">Edit</a>
+{{--                        @endcan--}}
+{{--                        @can('delete', $vacancy) --}}
+                            <form method="POST" action="{{route('vacancy.delete', ['vacancy' => $vacancy->id])}}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit">Delete</button>
+                            </form>
+{{--                        @endcan--}}
                     </td>
                 </tr>
             @endforeach
@@ -43,7 +47,9 @@
         </tbody>
     </table>
 
-    <a href="{{route('vacancy.create')}}">Create</a>
+    @can('create', \App\Models\Vacancy::class)
+        <a class="button" href="{{route('vacancy.create')}}">Create</a>
+    @endcan
 
     {{$vacancies->links()}}
 @endsection

@@ -3,7 +3,6 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\VacancyController;
-use App\Http\Controllers\VacancyTestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,11 +30,18 @@ Route::group(['prefix' => '/companies'], function() {
     Route::delete('/{company}', [CompanyController::class, 'delete'])->name('company.delete');
 });
 
-Route::group(['prefix' => '/vacancies'], function() {
+Route::group(['prefix' => '/vacancies', 'middleware' => 'auth'], function() {
     Route::get('', [VacancyController::class, 'index'])->name('vacancy.index');
-    Route::get('/create', [VacancyController::class, 'create'])->name('vacancy.create');
+    Route::get('/create', [VacancyController::class, 'create'])->name('vacancy.create')->middleware('admin');
     Route::post('/create', [VacancyController::class, 'store'])->name('vacancy.store');
-    Route::get('/{vacancy}', [VacancyController::class, 'edit'])->name('vacancy.edit');
-    Route::post('/{vacancy}', [VacancyController::class, 'edit'])->name('vacancy.edit');
+    Route::get('/{vacancy}/edit', [VacancyController::class, 'edit'])->name('vacancy.edit');
+    Route::post('/{vacancy}', [VacancyController::class, 'update'])->name('vacancy.update');
     Route::delete('/{vacancy}', [VacancyController::class, 'delete'])->name('vacancy.delete');
 });
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__.'/auth.php';
+

@@ -25,37 +25,32 @@ class CompanyController extends Controller
 //                'website' => 'required|max:255',
 //            ]);
 
+            dd($request);
             $company->name = $request->get('name');
             $company->website = $request->get('website');
-            $company->user_id = $request->get('user');
+            $company->user_id = $request->user()->id;
             $company->save();
 
             return redirect('/companies');
         }
 
-        $users = User::all();
-
         return response()->view('companies.form', [
             'company' => $company,
-            'users' => $users
         ]);
     }
 
     public function create()
     {
-        $users = User::all();
-
-        return response()->view('companies.create', [
-            'users' => $users
-        ]);
+        return response()->view('companies.create');
     }
 
     public function store(Request $request)
     {
+        //@fixme check user auth
         $company = new Company();
         $company->name = $request->get('name');
         $company->website = $request->get('website');
-        $company->user_id = $request->get('user');
+        $company->user_id = $request->user()->id;
 
         $company->save();
 

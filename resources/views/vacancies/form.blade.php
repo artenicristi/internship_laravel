@@ -2,74 +2,103 @@
 
 @section('body')
 
-    <h2>Create new vacancy</h2>
+    @php
+        $isUpdate = @isset($vacancy) && \Illuminate\Support\Facades\Request::url() == route('vacancy.edit', ['vacancy' => $vacancy->id]);
+    @endphp
 
-    <form action="{{route('vacancy.edit', ['vacancy' => $vacancy->id])}}" method="POST">
+    <h2>
+        @if($isUpdate)
+            Update {{$vacancy->title}}
+        @else
+            Create new vacancy
+        @endif
+    </h2>
+
+    <form
+        @if($isUpdate)
+            action="{{route('vacancy.update', ['vacancy' => $vacancy->id])}}"
+        @else
+            action="{{route('vacancy.create')}}"
+        @endif
+        method="POST">
         @csrf
 
-        <label for="vacancy-name">
-            <input type="text" name="title" value="{{$vacancy->title}}" placeholder="Vacancy title">
+        <label>
+            <input type="text" name="title" placeholder="Vacancy title"
+                   value="{{$isUpdate ? $vacancy->title : old('title')}}"
+            >
+            @include('errors', ['errors' => $errors->get('title')])
         </label>
 
-        <label for="vacancy-website">
-            <input type="text" name="content" value="{{$vacancy->content}}" placeholder="Vacancy content">
+        <label>
+            <input type="text" name="content" placeholder="Vacancy content"
+                   value="{{$isUpdate ? $vacancy->content : old('content')}}"
+            >
+            @include('errors', ['errors' => $errors->get('content')])
         </label>
 
-        <label for="vacancy-website">
-            <input type="text" name="location" value="{{$vacancy->location}}" placeholder="Vacancy location">
+        <label>
+            <input type="text" name="location" placeholder="Vacancy location"
+                   value="{{$isUpdate ? $vacancy->location : old('location')}}"
+            >
+            @include('errors', ['errors' => $errors->get('location')])
         </label>
 
-        <label for="vacancy-website">
-            <input type="text" name="image" value="{{$vacancy->image}}" placeholder="Vacancy image">
+        <label>
+            <input type="text" name="image" placeholder="Vacancy image"
+                   value="{{$isUpdate ? $vacancy->image : old('image')}}"
+            >
+            @include('errors', ['errors' => $errors->get('image')])
         </label>
 
-        <select id="users" name="user">
-            @foreach($users as $user)
-                @if($user->id == $vacancy->user->id)
-                    <option value="{{$user->id}}" selected="selected">{{$user->name}}</option>
+        <select id="companies" name="company_id">
+            @forelse($companies as $company)
+                @if(!old('company_id') && $isUpdate && $company->id == $vacancy->company->id)
+                    <option value="{{$company->id}}" selected="selected">if1 . {{$company->name}}</option>
+                @elseif(old('company_id') == $company->id)
+                    <option value="{{old('company_id')}}" selected="selected">if2 . {{$company->name}}</option>
                 @else
-                    <option value="{{$user->id}}">{{$user->name}}</option>
+                    <option value="{{$company->id}}">if3 . {{$company->name}}</option>
                 @endif
-            @endforeach
+            @empty
+                <option disabled>Nothing...</option>
+            @endforelse
         </select>
 
-        <select id="companies" name="company">
-            @foreach($companies as $company)
-                @if($company->id == $vacancy->company->id)
-                    <option value="{{$company->id}}" selected="selected">{{$company->name}}</option>
+        <select id="categories" name="category_id">
+            @forelse($categories as $key => $category)
+                @if(!old('category_id') && $isUpdate && $category->id == $vacancy->category->id)
+                    <option value="{{$category->id}}" selected="selected">if1 . {{$category->name}}</option>
+                @elseif(old('category_id') == $category->id)
+                    <option value="{{old('category_id')}}" selected="selected">if2 . {{$category->name}}</option>
                 @else
-                    <option value="{{$company->id}}">{{$company->name}}</option>
+                    <option value="{{$category->id}}">if3 . {{$category->name}}</option>
                 @endif
-            @endforeach
-        </select>
-
-        <select id="categories" name="category">
-            @foreach($categories as $category)
-                @if($category->id == $vacancy->category->id)
-                    <option value="{{$category->id}}" selected="selected">{{$category->name}}</option>
-                @else
-                    <option value="{{$category->id}}">{{$category->name}}</option>
-                @endif
-            @endforeach
+            @empty
+                <option disabled>Nothing...</option>
+            @endforelse
         </select>
 
         <p>Select type:</p>
         <div>
-            <input type="radio" id="choice1"
-                   name="type" value="full time"
-                   @if($vacancy->type == 'full time')
-                       checked
-                   @endif
-            >
-            <label for="choice1">Full time</label>
+            <label>
+                <input type="radio" id="choice1" name="type" value="full-time"
+                       @if($isUpdate && $vacancy->type == 'full-time')
+                           checked="checked"
+                    @endif
+                >
+                Full time
+            </label>
 
-            <input type="radio" id="choice2"
-                   name="type" value="part time"
-                   @if($vacancy->type == 'part time')
-                       checked
-                   @endif
-            >
-            <label for="choice2">Part time</label>
+            <label>
+                <input type="radio" id="choice2" name="type" value="part-time"
+                       @if($isUpdate && $vacancy->type == 'part-time')
+                           checked="checked"
+                    @endif
+                >
+                Part time
+            </label>
+            @include('errors', ['errors' => $errors->get('type')])
         </div>
 
         <button type="submit">Submit</button>

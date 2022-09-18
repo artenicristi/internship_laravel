@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateVacancyRequest;
 use App\Models\Category;
 use App\Models\Company;
-use App\Models\User;
 use App\Models\Vacancy;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class VacancyController extends Controller
 {
@@ -18,67 +18,59 @@ class VacancyController extends Controller
         ]);
     }
 
-    public function edit(Vacancy $vacancy, Request $request)
+    public function edit(Vacancy $vacancy)
     {
-        if ($request->isMethod('POST')) {
-            $vacancy->title = $request->get('title');
-            $vacancy->content = $request->get('content');
-            $vacancy->location = $request->get('location');
-            $vacancy->image = $request->get('image');
-            $vacancy->type = $request->get('type');
-            $vacancy->user_id = $request->get('user');
-            $vacancy->company_id = $request->get('company');
-            $vacancy->category_id = $request->get('category');
-            $vacancy->save();
-
-            return redirect('/vacancies');
-        }
-
-        $users = User::all();
-        $companies = Company::all();
-        $categories = Category::all();
+//        $this->authorize('edit', $vacancy);
 
         return response()->view('vacancies.form', [
             'vacancy' => $vacancy,
-            'users' => $users,
-            'companies' => $companies,
-            'categories' => $categories,
+            'companies' => Company::all(),
+            'categories' => Category::all(),
         ]);
+    }
+
+    public function update(CreateVacancyRequest $request, Vacancy $vacancy)
+    {
+//        $this->authorize('update', $vacancy);
+
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id;
+
+        $vacancy->fill($data);
+        $vacancy->save();
+
+        return redirect()->route('vacancy.index');
     }
 
     public function create()
     {
-        $users = User::all();
-        $companies = Company::all();
-        $categories = Category::all();
+//        Gate::authorize('create', Vacancy::class);
 
-        return response()->view('vacancies.create', [
-            'users' => $users,
-            'companies' => $companies,
-            'categories' => $categories,
+         return response()->view('vacancies.form', [
+            'companies' => Company::all(),
+            'categories' => Category::all(),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateVacancyRequest $request)
     {
+        //@fixme $request->user()->can('store', Vacancy::class)
         $vacancy = new Vacancy();
-        $vacancy->title = $request->get('title');
-        $vacancy->content = $request->get('content');
-        $vacancy->image = $request->get('image');
-        $vacancy->type = $request->get('type');
-        $vacancy->location = $request->get('location');
-        $vacancy->user_id = $request->get('user');
-        $vacancy->company_id = $request->get('company');
-        $vacancy->category_id = $request->get('category');
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id;
 
+        $vacancy->fill($data);
         $vacancy->save();
 
-        return redirect('/vacancies');
+        return redirect()->route('vacancy.index');
+
     }
 
     public function delete(Vacancy $vacancy)
     {
+//        $this->authorize('delete', $vacancy);
+
         $vacancy->delete();
-        return redirect('/vacancies');
+        return redirect()->route('vacancy.index');
     }
 }

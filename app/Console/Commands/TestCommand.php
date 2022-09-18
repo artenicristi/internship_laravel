@@ -38,7 +38,7 @@ class TestCommand extends Command
 //            'password' => 'Pass123',
 //        ]);
 
-        User::factory(10, [])->create();
+        User::factory(5, [])->create();
         dd();
 
         $user = User::find(1);

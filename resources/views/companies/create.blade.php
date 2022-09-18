@@ -15,12 +15,6 @@
             <input type="text" name="website" placeholder="Company website">
         </label>
 
-        <select id="users" name="user">
-            @foreach($users as $user)
-                <option value="{{$user->id}}">{{$user->name}}</option>
-            @endforeach
-        </select>
-
         <button type="submit">Submit</button>
     </form>
 
