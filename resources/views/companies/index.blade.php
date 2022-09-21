@@ -33,7 +33,9 @@
         </tbody>
     </table>
 
-    <a href="{{route('company.create')}}">Create</a>
+    @can('company_create')
+        <a href="{{route('company.create')}}">Create</a>
+    @endcan
 
     {{$companies->links()}}
 @endsection

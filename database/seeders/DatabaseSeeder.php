@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Category;
+use App\Models\Company;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -34,7 +34,9 @@ class DatabaseSeeder extends Seeder
     {
 
         collect(self::CATEGORIES)->each(fn ($category) => Category::create(['name' => $category]));
-        $this->call(UserSeeder::class);
 
+        $this->call(RoleSeeder::class);
+        $this->call(PermissionSeeder::class);
+        $this->call(UserSeeder::class);
     }
 }

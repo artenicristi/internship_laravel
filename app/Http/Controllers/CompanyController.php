@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
 {
@@ -17,50 +16,43 @@ class CompanyController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Company $company)
+    public function edit(Company $company)
     {
-        if ($request->isMethod('POST')) {
-//            Validator::validate($request->only(['name']), [
-//                'name' => 'required|max:255',
-//                'website' => 'required|max:255',
-//            ]);
-
-            dd($request);
-            $company->name = $request->get('name');
-            $company->website = $request->get('website');
-            $company->user_id = $request->user()->id;
-            $company->save();
-
-            return redirect('/companies');
-        }
-
         return response()->view('companies.form', [
             'company' => $company,
         ]);
     }
 
-    public function create()
+    public function update(CompanyRequest $request, Company $company)
     {
-        return response()->view('companies.create');
-    }
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id;
 
-    public function store(Request $request)
-    {
-        //@fixme check user auth
-        $company = new Company();
-        $company->name = $request->get('name');
-        $company->website = $request->get('website');
-        $company->user_id = $request->user()->id;
-
+        $company->fill($data);
         $company->save();
 
-        return redirect('/companies');
+        return redirect()->route('company.index');
+    }
+
+    public function create()
+    {
+        return response()->view('companies.form');
+    }
+
+    public function store(CompanyRequest $request)
+    {
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id;
+
+        Company::create($data);
+
+        return redirect()->route('company.index');
     }
 
     public function delete(Company $company)
     {
         $company->delete();
-        return redirect('/companies');
+        return redirect()->route('company.index');
     }
 
 }

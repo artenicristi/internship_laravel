@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Company;
 use App\Models\User;
-use App\Models\VacancyTest;
 use Illuminate\Console\Command;
+use Spatie\Permission\Models\Role;
 
 class TestCommand extends Command
 {
@@ -30,39 +29,6 @@ class TestCommand extends Command
      */
     public function handle()
     {
-//        User::query()->get()->dd();
-//
-//        User::query()->create([
-//            'name' => 'John',
-//            'email' => 'dev@gmail.com',
-//            'password' => 'Pass123',
-//        ]);
-
-        User::factory(5, [])->create();
-        dd();
-
-        $user = User::find(1);
-
-        $company = new Company;
-        $company->name = 'test';
-        $company->website = 'test.en';
-
-//        $company->user()->associate($user);
-        $company->save();
-
-
-//
-//        User::query()
-//            ->where('email', 'dev@gmail.com')
-//            ->firstOrFail();
-
-//        VacancyTest::query()->create([
-//            'company' => 'pentalog',
-//            'position' => 'developer',
-//        ]);
-
-
-
         return 0;
     }
 }

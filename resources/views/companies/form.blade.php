@@ -2,28 +2,35 @@
 
 @section('body')
 
-    <h2>Company {{$company->name}}</h2>
+    @php
+        $isUpdate = @isset($company) && \Illuminate\Support\Facades\Request::url() == route('company.edit', ['company' => $company->id]);
+    @endphp
 
-    <form action="{{route('company.edit', ['company' => $company->id])}}" method="POST">
+    <h2>
+        @if($isUpdate)
+            Update {{$company->title}}
+        @else
+            Create new vacancy
+        @endif
+    </h2>
+
+    <form
+        action="{{$isUpdate ? route('company.update', ['company' => $company->id])
+                            : route('company.create')}}"
+        method="POST">
         @csrf
 
         <label for="company-name">
-            <input type="text" name="name" value="{{$company->name}}" placeholder="Company name">
+            <input type="text" name="name" placeholder="Company name"
+                   value="{{$isUpdate ? $company->name : old('name')}}">
+            @include('errors', ['errors' => $errors->get('name')])
         </label>
 
         <label for="company-website">
-            <input type="text" name="website" value="{{$company->website}}" placeholder="Company website">
+            <input type="text" name="website" placeholder="Company website"
+                   value="{{$isUpdate ? $company->website : old('website')}}">
+            @include('errors', ['errors' => $errors->get('website')])
         </label>
-
-        <select id="users" name="user">
-            @foreach($users as $user)
-                @if($user->id == $company->user->id)
-                    <option value="{{$user->id}}" selected="selected">{{$user->name}}</option>
-                @else
-                    <option value="{{$user->id}}">{{$user->name}}</option>
-                @endif
-            @endforeach
-        </select>
 
         <button type="submit">Submit</button>
     </form>

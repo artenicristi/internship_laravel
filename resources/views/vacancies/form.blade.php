@@ -15,11 +15,8 @@
     </h2>
 
     <form
-        @if($isUpdate)
-            action="{{route('vacancy.update', ['vacancy' => $vacancy->id])}}"
-        @else
-            action="{{route('vacancy.create')}}"
-        @endif
+        action="{{$isUpdate ? route('vacancy.update', ['vacancy' => $vacancy->id])
+                            : route('vacancy.create')}}"
         method="POST">
         @csrf
 
@@ -83,7 +80,7 @@
         <div>
             <label>
                 <input type="radio" id="choice1" name="type" value="full-time"
-                       @if($isUpdate && $vacancy->type == 'full-time')
+                       @if($isUpdate && $vacancy->type == 'full-time' || old('type') == 'full-time')
                            checked="checked"
                     @endif
                 >
@@ -92,7 +89,7 @@
 
             <label>
                 <input type="radio" id="choice2" name="type" value="part-time"
-                       @if($isUpdate && $vacancy->type == 'part-time')
+                       @if($isUpdate && $vacancy->type == 'part-time' || old('type') == 'part-time')
                            checked="checked"
                     @endif
                 >

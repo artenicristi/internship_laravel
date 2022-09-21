@@ -30,16 +30,16 @@
                     <td>{{$vacancy->company->name}}</td>
                     <td>{{$vacancy->user->name}}</td>
                     <td>
-{{--                        @can('update', $vacancy)--}}
+                        @can('update', $vacancy)
                             <a href="{{route('vacancy.edit', ['vacancy' => $vacancy->id])}}">Edit</a>
-{{--                        @endcan--}}
-{{--                        @can('delete', $vacancy) --}}
+                        @endcan
+                        @can('delete', $vacancy)
                             <form method="POST" action="{{route('vacancy.delete', ['vacancy' => $vacancy->id])}}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit">Delete</button>
                             </form>
-{{--                        @endcan--}}
+                        @endcan
                     </td>
                 </tr>
             @endforeach

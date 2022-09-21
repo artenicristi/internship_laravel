@@ -34,16 +34,11 @@ class VacancyPolicy
 
     public function update(?User $user, Vacancy $vacancy)
     {
-//        dump('update');
-//        return true;
-//        dd($vacancy->user()->id, $vacancy->user->id, "UPDATE");
         return auth()->check() && $vacancy->user->id == $user->id;
     }
 
     public function delete(?User $user, Vacancy $vacancy)
     {
-//        dump('delete');
-//        return true;
         return auth()->check() && $vacancy->user->id == $user->id;
     }
 
